@@ -1,0 +1,19 @@
+
+REIMBURSEMENT CONFIRMATION
+
+
+
+
+Hi [NAME],
+Great news - your reimbursement has been processed successfully.
+AMOUNT TRANSFERRED
+£[AMOUNT]
+For: [DESCRIPTION]
+The funds should now be available in your account. If you have any questions, just reply to this email.
+Thanks for everything you do for MWA - we really appreciate it.
+Warm regards,
+[Your name]
+[Your role]
+May Week Alternative · Cambridge
+Raise: A Celebration of Giving (Charity number: 1202899)
+joinraise.org  ·  cambridge-treasurer@joinraise.org

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Raise — Email Templates</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap">
+<style>
+  :root {
+    --font-content: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-header:  'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font-content); background: #f5f9fa; color: #333; }
+  .app { display: grid; grid-template-columns: 320px 1fr; min-height: 100vh; }
+
+  /* ---- Sidebar ---- */
+  aside { background: #FAFAFA; border-right: 1px solid #e6eff1; padding: 28px 22px; }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .brand img { height: 46px; }
+  .brand-title { font-family: var(--font-header); font-weight: 900; font-size: 17px; color: #5D215E; letter-spacing: -0.01em; }
+  .brand-sub { font-size: 11px; color: #888; letter-spacing: 0.3px; }
+  .group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.3px; color: #999; font-weight: 700; margin: 18px 6px 6px; }
+  .tpl-btn { display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; background: transparent; border: 0; padding: 10px 12px; border-radius: 10px; cursor: pointer; font-family: inherit; color: inherit; transition: background 120ms; }
+  .tpl-btn:hover { background: #f0fafb; }
+  .tpl-btn.active { background: #e8f6f8; box-shadow: inset 3px 0 0 #5D215E; }
+  /* Pinned "start here" tile — darker tint + a contained inset outline so it
+     stands out at rest. Uses inset (not drop) shadow so it can never bleed
+     onto the adjacent tile when that tile is active. */
+  .tpl-btn.featured { background: #eef3f4; box-shadow: inset 0 0 0 1px rgba(20,30,40,0.20); }
+  .tpl-btn.featured:hover { background: #e3ebec; box-shadow: inset 0 0 0 1px rgba(20,30,40,0.28); }
+  .tpl-btn.featured.active { background: #e8f6f8; box-shadow: inset 3px 0 0 #5D215E; }
+  .tpl-meta { display: block; min-width: 0; }
+  .tpl-meta .name { display: block; font-family: var(--font-header); font-size: 14px; font-weight: 700; color: #222; line-height: 1.25; }
+  .tpl-meta .audience { display: block; font-size: 11px; color: #888; margin-top: 2px; line-height: 1.4; }
+
+  /* ---- Main ---- */
+  main { padding: 32px 40px 60px; min-width: 0; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+  .crumb { font-size: 11px; text-transform: uppercase; letter-spacing: 1.3px; color: #888; font-weight: 700; }
+  h1 { font-family: var(--font-header); font-size: 32px; margin: 4px 0 6px; color: #5D215E; font-weight: 900; letter-spacing: -0.015em; line-height: 1.1; }
+  .lede { font-size: 15px; color: #555; max-width: 56ch; line-height: 1.55; }
+  .how-to-use { margin: 12px 0 0 0; padding-left: 20px; font-size: 14px; color: #444; line-height: 1.5; max-width: 56ch; }
+  .how-to-use li { margin: 0; }
+  .how-to-use strong { color: #5D215E; }
+
+  .topbar-left { min-width: 0; flex: 1; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  /* "Add a link" inline form, shown only for templates whose body has a CTA button.
+     Lives below the bullets in the topbar's left column. */
+  .link-panel { background: #FAFAFA; border: 1px solid #e6eff1; border-radius: 10px; padding: 14px 16px 14px; margin: 16px 0 0; max-width: 480px; }
+  .link-panel-title { font-family: var(--font-header); font-size: 13px; font-weight: 800; color: #5D215E; margin-bottom: 4px; }
+  .link-panel-help { font-size: 11px; color: #888; margin: 0 0 12px; line-height: 1.45; }
+  .link-panel label { display: block; margin-bottom: 10px; }
+  .link-panel label:last-of-type { margin-bottom: 0; }
+  .link-panel label span { display: block; font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.7px; font-weight: 700; margin-bottom: 4px; }
+  .link-panel input { width: 100%; padding: 8px 10px; font-family: inherit; font-size: 13px; color: #222; background: #fff; border: 1px solid #d6e0e3; border-radius: 6px; box-sizing: border-box; }
+  .link-panel input:focus { outline: 0; border-color: #5D215E; box-shadow: 0 0 0 2px rgba(93,33,94,0.18); }
+  .link-panel-warning { margin-top: 10px; background: #fdecea; color: #b3261e; padding: 8px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; line-height: 1.4; }
+  .action { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; border: 0; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; text-decoration: none; transition: transform 150ms, background 150ms; }
+  .action:hover { transform: translateY(-1px); }
+  .action.primary { background: #5D215E; color: #FAFAFA; }
+  .action.primary:hover { background: #6D376E; }
+  .action.ghost { background: #FAFAFA; color: #333; border: 1px solid #e0e8eb; }
+  .action.ghost:hover { background: #f0fafb; }
+  .action.copied { background: #2a8a3f !important; }
+
+  /* ---- Preview ---- */
+  .preview-wrap { margin-top: 20px; border-radius: 14px; overflow: hidden; background: #e8f6f8; box-shadow: 0 4px 24px rgba(99,200,212,0.18); }
+  .preview-toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #FAFAFA; border-bottom: 1px solid #e6eff1; }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 99px; }
+  .dot.r { background: #ff5f56; } .dot.y { background: #ffbd2e; } .dot.g { background: #27c93f; }
+  .preview-title { font-size: 12px; color: #888; font-weight: 600; margin-left: 8px; }
+  iframe { width: 100%; height: 1200px; border: 0; background: #e8f6f8; display: block; }
+
+  /* ---- Toast ---- */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #181818; color: #FAFAFA; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; opacity: 0; transition: transform 250ms, opacity 250ms; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ---- Brand toggle ---- */
+  .brand-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #f0eee9; border-radius: 10px; padding: 4px; margin-bottom: 8px; }
+  .bt-btn { background: transparent; border: 0; padding: 9px 10px 8px; border-radius: 7px; cursor: pointer; font-family: var(--font-content); font-size: 13px; font-weight: 700; color: #555; line-height: 1.15; text-align: center; transition: background 120ms, color 120ms; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .bt-btn:hover { color: #181818; }
+  .bt-btn.active { background: #FAFAFA; color: #181818; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .bt-btn .bt-meta { font-size: 9px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .bt-btn.active .bt-meta { color: #888; }
+
+
+  /* ---- Mobile nav toggle (hidden on desktop) ---- */
+  .nav-toggle { display: none; }
+  .nav-backdrop { display: none; }
+
+  /* ---- Mobile layout: phone / small tablet ---- */
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    aside {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 86%; max-width: 320px;
+      z-index: 100;
+      transform: translateX(-100%);
+      transition: transform 220ms ease;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+      overflow-y: auto;
+      padding: 22px 18px 80px;
+    }
+    body.nav-open aside { transform: translateX(0); }
+    .nav-backdrop {
+      display: block; position: fixed; inset: 0;
+      background: rgba(20,30,40,0.45);
+      z-index: 99;
+      opacity: 0; pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+    body.nav-open .nav-backdrop { opacity: 1; pointer-events: auto; }
+    .nav-toggle {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 13px 18px;
+      background: #5D215E; color: #FAFAFA;
+      border: 0;
+      font-family: var(--font-header); font-size: 14px; font-weight: 800;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .nav-toggle::before { content: '☰'; font-size: 18px; line-height: 1; }
+    main { padding: 0 0 40px; }
+    .main-inner { padding: 18px 18px 0; }
+    .topbar { flex-direction: column; align-items: stretch; gap: 12px; }
+    h1 { font-size: 26px; }
+    .lede { font-size: 14px; }
+    .actions { max-width: none; min-width: 0; }
+    iframe { height: 680px; }
+    .preview-wrap { margin-top: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside>
+    <div class="brand">
+      <img id="brand-logo" src="pieces/raise-logo.png" alt="">
+      <div>
+        <div class="brand-title" id="brand-name">Raise</div>
+        <div class="brand-sub" id="brand-sub">Email Templates</div>
+      </div>
+    </div>
+
+    <div class="brand-toggle" role="tablist" aria-label="Brand">
+      <button class="bt-btn active" data-brand="raise">Raise <span class="bt-meta">national + chapters</span></button>
+      <button class="bt-btn" data-brand="mwa">MWA <span class="bt-meta">Cambridge</span></button>
+    </div>
+
+    <!-- Main brand group (label switches between Raise / MWA) -->
+    <div class="group-label" id="main-group-label">Raise</div>
+    <!-- Pinned starter — sits at the top of the brand group, slight shadow + tint so new users gravitate here first -->
+    <button class="tpl-btn featured" data-id="01_base">
+      <span class="tpl-meta"><span class="name">Empty shell</span><span class="audience">Start here</span></span>
+    </button>
+    <button class="tpl-btn" data-id="02_chapter_comms">
+      <span class="tpl-meta"><span class="name">Internal comms</span><span class="audience">Comms with chapters or NT</span></span>
+    </button>
+    <button class="tpl-btn" data-id="05_partner_external">
+      <span class="tpl-meta"><span class="name">External comms</span><span class="audience">Comms for partner orgs.</span></span>
+    </button>
+    <button class="tpl-btn" data-id="04_internal_programme">
+      <span class="tpl-meta"><span class="name">Announcement</span><span class="audience">Events, updates, news - anything with a headline</span></span>
+    </button>
+    <button class="tpl-btn" data-id="07_impact_report">
+      <span class="tpl-meta"><span class="name">Impact report</span><span class="audience">Year-end, big numbers, story</span></span>
+    </button>
+
+    <div class="group-label">National Team</div>
+    <button class="tpl-btn" data-id="03_reimbursement">
+      <span class="tpl-meta"><span class="name">Reimbursement</span><span class="audience">Treasurer paying back a volunteer</span></span>
+    </button>
+
+    <div class="group-label">Chapters</div>
+    <button class="tpl-btn" data-id="06_event_invite">
+      <span class="tpl-meta"><span class="name">Event invite</span><span class="audience">Events & RSVPs</span></span>
+    </button>
+  </aside>
+
+  <main>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open templates menu">Templates</button>
+    <div class="main-inner">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="crumb" id="crumb">National Team · Announcement</div>
+        <h1 id="title">Announcement</h1>
+        <p class="lede" id="lede">Announce something with a headline and a few key facts. Works for new events, programmes, team members, meetings, or any other update. A single button at the bottom links wherever you want.</p>
+        <ul class="how-to-use">
+          <li>Use the <strong>Copy For Email</strong> button and then paste in Gmail to edit.</li>
+          <li id="how-to-use-link" hidden>The <strong>Add a link</strong> panel below is optional — if you leave the fields blank, the button below won't be included in the copy.</li>
+        </ul>
+        <div class="link-panel" id="link-panel" hidden>
+          <div class="link-panel-title">Add a link</div>
+          <p class="link-panel-help">Enter button text and a URL — they'll replace the placeholders in the template's button when you copy.</p>
+          <label>
+            <span>Button text</span>
+            <input type="text" id="btn-text" autocomplete="off">
+          </label>
+          <label>
+            <span>Link URL</span>
+            <input type="url" id="btn-url" autocomplete="off" placeholder="https://example.com">
+          </label>
+          <div class="link-panel-warning" id="btn-warning" hidden>Button text needs a link too — add a URL, or clear the text.</div>
+        </div>
+        <div class="actions">
+          <button class="action primary" id="copy-btn">Copy For Email</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-wrap">
+      <div class="preview-toolbar">
+        <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+        <span class="preview-title" id="ptitle">Email Template</span>
+      </div>
+      <iframe id="preview" src="04_internal_programme.html" title="Email preview"></iframe>
+    </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="nav-backdrop" id="nav-backdrop"></div>
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+const TEMPLATES = {
+  '01_base': {
+    crumb: 'National Team · Base', title: 'Empty shell',
+    cta: { defaultText: '[Button text]' },
+    lede: 'Start here when you just need a clean Raise-branded email and want to write the message yourself. The header, four-colour bar, footer and sign-off are pre-set — drop your text into the body and you’re done.',
+  },
+  '02_chapter_comms': {
+    crumb: 'National Team · To chapters', title: 'Internal comms',
+    lede: 'A warm, freeform email between chapters and the National Team — in either direction. Light structure, generous whitespace, no callouts: just a greeting, your message, and a sign-off.',
+  },
+  '03_reimbursement': {
+    crumb: 'National Team · Finance', title: 'Reimbursement confirmation',
+    lede: 'Confirm to a volunteer that their reimbursement has been paid. The amount and what it’s for sit in a highlighted box; the rest is functional and short. Sent by whoever’s acting as treasurer for the payment.',
+  },
+  '04_internal_programme': {
+    crumb: 'National Team · Announcement', title: 'Announcement',
+    cta: { defaultText: '[Button text]' },
+    lede: 'Announce something with a headline and a few key facts. Works for new events, programmes, team members, meetings, or any other update. A single button at the bottom links wherever you want.',
+    donts: ['Don\u2019t bury the headline under context', 'Don\u2019t leave [LINK] in the button when you send', 'Don\u2019t forget to remove the italic tip line under the button'],
+  },
+  '05_partner_external': {
+    crumb: 'External · Comms', title: 'External comms',
+    cta: { defaultText: '[Button text]' },
+    lede: 'Polished outreach to anyone outside the org — partners, grantmakers, donors, colleges, corporates. The thing that makes it work for external use is the one-line briefing of who Raise (or MWA) is in the first paragraph; everything else is generic.',
+  },
+  '06_event_invite': {
+    crumb: 'Chapters · Events', title: 'Event invite',
+    cta: { defaultText: 'RSVP now' },
+    lede: 'Invite people to an event — training, dinner, summit, social, anything with a When / Where / Who. The yellow RSVP button is designed to be the most visible thing on the page.',
+  },
+  '07_impact_report': {
+    crumb: 'National Team · End-of-year', title: 'Impact report',
+    cta: { defaultText: '[Button text]' },
+    lede: 'End-of-year summary for donors, volunteers, and alumni — anyone who should see the numbers. Headline £-total, three supporting metrics in the brand palette, a short thank-you, and an optional link button if you have a fuller writeup to share.',
+  },
+};
+
+const buttons = document.querySelectorAll('.tpl-btn');
+const iframe = document.getElementById('preview');
+const titleEl = document.getElementById('title');
+const lede = document.getElementById('lede');
+const crumb = document.getElementById('crumb');
+const ptitle = document.getElementById('ptitle');
+const copyBtn = document.getElementById('copy-btn');
+const toast = document.getElementById('toast');
+const linkPanel = document.getElementById('link-panel');
+const btnTextInput = document.getElementById('btn-text');
+const btnUrlInput = document.getElementById('btn-url');
+const btnWarning = document.getElementById('btn-warning');
+let currentId = '04_internal_programme';
+
+// Per-brand metadata overrides — only the fields that differ are listed.
+const BRAND_OVERRIDES = {
+  mwa: {
+    '01_base':              { crumb: 'National Team · MWA · Base' },
+    '02_chapter_comms':     { crumb: 'National Team · To Cambridge', title: 'Internal comms',
+                              lede: 'A warm internal MWA email — between Cambridge and National Team, or Cambridge committee to its own members. Light structure, generous whitespace, no callouts.' },
+    '03_reimbursement':     { crumb: 'National Team · MWA · Finance',
+                              lede: 'Confirm to a Cambridge volunteer that their reimbursement has been paid. Same shape as the Raise version — amount and description in a highlighted box, short and functional.' },
+    '04_internal_programme':{ crumb: 'National Team · MWA · Announcement', title: 'Announcement (MWA)',
+                              lede: 'Announce something to the MWA Cambridge team or audience — events, programmes, team members, meetings, or any other update. Headline, a few key facts in a callout, and a single button.' },
+    '05_partner_external':  { crumb: 'External · MWA · Comms', title: 'External comms (MWA)',
+                              lede: 'Polished outreach from MWA Cambridge to anyone outside the org — partners, grantmakers, donors, colleges, corporates. The thing that makes it work for external use is the one-line briefing of MWA in paragraph one; everything else is generic.' },
+    '06_event_invite':      { crumb: 'Chapters · MWA · Events',
+                              lede: 'Invite people to a Cambridge event — training, May Week event, formal dinner, social. When / Where / Who in a callout; yellow RSVP button is the most visible thing on the page.' },
+    '07_impact_report':     { crumb: 'National Team · MWA · End-of-year', title: 'Impact report — Cambridge',
+                              lede: 'End-of-year summary for Cambridge donors, volunteers, and alumni. Headline £-total, three supporting metrics (e.g. Colleges / Donors / Volunteers), a short thank-you, and an optional link button if you have a fuller writeup to share.' },
+  },
+};
+
+const BRAND_CONFIG = {
+  raise: { name: 'Raise', sub: 'Email Templates', logo: 'pieces/raise-logo.png', filePrefix: '' },
+  mwa:   { name: 'MWA',   sub: 'Cambridge',       logo: 'pieces/mwa-logo.png', filePrefix: 'mwa_' },
+};
+let currentBrand = (() => { try { return localStorage.getItem('raise.brand') || 'raise'; } catch { return 'raise'; } })();
+if (!BRAND_CONFIG[currentBrand]) currentBrand = 'raise';
+
+function applyBrand(brand) {
+  currentBrand = brand;
+  const cfg = BRAND_CONFIG[brand];
+  document.body.classList.toggle('brand-mwa', brand === 'mwa');
+  document.getElementById('brand-logo').src = cfg.logo;
+  document.getElementById('brand-name').textContent = cfg.name;
+  document.getElementById('brand-sub').textContent = cfg.sub;
+  document.getElementById('main-group-label').textContent = cfg.name;
+  document.querySelectorAll('.bt-btn').forEach(b => b.classList.toggle('active', b.dataset.brand === brand));
+  try { localStorage.setItem('raise.brand', brand); } catch {}
+}
+
+function getMeta(id) {
+  const base = TEMPLATES[id];
+  const override = (BRAND_OVERRIDES[currentBrand] || {})[id];
+  return { ...base, ...(override || {}) };
+}
+
+function select(id) {
+  const meta = getMeta(id);
+  if (!meta) return;
+  currentId = id;
+  const path = BRAND_CONFIG[currentBrand].filePrefix + id + '.html';
+  iframe.src = path;
+  ptitle.textContent = 'Email Template';
+  crumb.textContent = meta.crumb;
+  titleEl.textContent = meta.title;
+  lede.innerHTML = meta.lede;
+  // Add-a-link form + its explanatory bullet: only for templates with a CTA
+  const hasCta = !!meta.cta;
+  linkPanel.hidden = !hasCta;
+  document.getElementById('how-to-use-link').hidden = !hasCta;
+  btnTextInput.value = '';
+  btnUrlInput.value = '';
+  btnWarning.hidden = true;
+  if (hasCta) btnTextInput.placeholder = meta.cta.defaultText;
+  buttons.forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  try { localStorage.setItem('raise.lastTemplate', id); } catch {}
+}
+
+// Wire up the brand toggle
+document.querySelectorAll('.bt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    applyBrand(btn.dataset.brand);
+    select(currentId);
+  });
+});
+applyBrand(currentBrand);
+
+buttons.forEach(b => b.addEventListener('click', () => {
+  select(b.dataset.id);
+  document.body.classList.remove('nav-open'); // close mobile drawer on selection
+}));
+
+// Mobile nav toggle
+const navToggle = document.getElementById('nav-toggle');
+const navBackdrop = document.getElementById('nav-backdrop');
+if (navToggle) {
+  navToggle.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+}
+if (navBackdrop) {
+  navBackdrop.addEventListener('click', () => document.body.classList.remove('nav-open'));
+}
+
+// Hide the warning as soon as the user touches either field — they're correcting it.
+[btnTextInput, btnUrlInput].forEach(el => el.addEventListener('input', () => { btnWarning.hidden = true; }));
+
+copyBtn.addEventListener('click', async () => {
+  try {
+    const meta = getMeta(currentId);
+    const btnText = btnTextInput.value.trim();
+    const btnUrl = btnUrlInput.value.trim();
+
+    // Validation: text without URL would produce a styled button with a dead href.
+    // Block the copy and prompt the user to either add a URL or clear the text.
+    if (meta.cta && btnText && !btnUrl) {
+      btnWarning.hidden = false;
+      btnUrlInput.focus();
+      return;
+    }
+
+    const res = await fetch(BRAND_CONFIG[currentBrand].filePrefix + currentId + '.html');
+    let fullHtml = await res.text();
+
+    // Apply the "Add a link" panel to the copy: always strip the in-template
+    // tip line; either remove the button entirely (both inputs blank) or
+    // substitute the user's values via direct DOM manipulation.
+    if (meta.cta) {
+      const parsed = new DOMParser().parseFromString(fullHtml, 'text/html');
+      const btnAnchor = parsed.querySelector('a[href="[LINK]"]');
+      if (btnAnchor) {
+        const btnTable = btnAnchor.closest('table');
+        if (btnTable) {
+          // Always remove the italic tip paragraph that sits right after the
+          // button — it's gallery-side guidance, not part of the final email.
+          const next = btnTable.nextElementSibling;
+          if (next && next.tagName === 'P' && (next.getAttribute('style') || '').includes('italic')) {
+            next.remove();
+          }
+          if (!btnText && !btnUrl) {
+            btnTable.remove();
+          } else {
+            if (btnText) btnAnchor.textContent = btnText;
+            if (btnUrl) {
+              // If the user typed a bare domain (e.g. "gmail.com"), prepend
+              // https:// so it doesn't get resolved as a relative URL against
+              // this page's origin when the browser serializes for clipboard.
+              const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(btnUrl);
+              btnAnchor.setAttribute('href', hasScheme ? btnUrl : 'https://' + btnUrl);
+            }
+          }
+        }
+      }
+      fullHtml = '<!DOCTYPE html>\n' + parsed.documentElement.outerHTML;
+    }
+
+    // Extract body inner HTML so the clipboard carries a rich fragment
+    // (what Gmail expects on paste), not a full <!DOCTYPE><html>… document
+    // which Gmail would otherwise treat as plain text.
+    const doc = new DOMParser().parseFromString(fullHtml, 'text/html');
+    const bodyHtml = doc.body.innerHTML;
+    const plainText = doc.body.innerText || '';
+
+    if (typeof ClipboardItem !== 'undefined' && navigator.clipboard && navigator.clipboard.write) {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'text/html':  new Blob([bodyHtml],  { type: 'text/html'  }),
+          'text/plain': new Blob([plainText], { type: 'text/plain' }),
+        }),
+      ]);
+    } else {
+      // Fallback for older browsers: render into a hidden contenteditable,
+      // select it, and let execCommand('copy') do a rich copy.
+      const tmp = document.createElement('div');
+      tmp.contentEditable = 'true';
+      tmp.innerHTML = bodyHtml;
+      tmp.style.cssText = 'position:fixed; left:-10000px; top:0; opacity:0;';
+      document.body.appendChild(tmp);
+      const range = document.createRange();
+      range.selectNodeContents(tmp);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      tmp.remove();
+    }
+
+    copyBtn.classList.add('copied');
+    copyBtn.textContent = '✓ Copied';
+    toast.textContent = 'Copied — paste into Gmail compose';
+    toast.classList.add('show');
+    setTimeout(() => {
+      copyBtn.classList.remove('copied');
+      copyBtn.textContent = 'Copy For Email';
+      toast.classList.remove('show');
+    }, 1800);
+  } catch (e) {
+    toast.textContent = 'Could not copy — open the file and use Cmd+A then Cmd+C';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+});
+
+// init
+const saved = (() => { try { return localStorage.getItem('raise.lastTemplate'); } catch { return null; } })();
+select(saved && TEMPLATES[saved] ? saved : '04_internal_programme');
+</script>
+</body>
+</html>
